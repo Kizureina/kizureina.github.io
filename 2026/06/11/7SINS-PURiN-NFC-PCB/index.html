@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+
+<html theme="dark" showBanner="true" hasBanner="true" > 
+<link href="/fontawesome/css/fontawesome.css" rel="stylesheet">
+<link href="/fontawesome/css/brands.css" rel="stylesheet">
+<link href="/fontawesome/css/solid.css" rel="stylesheet">
+<script src="/js/color.global.min.js" ></script>
+<script src="/js/load-settings.js" ></script>
+<head>
+  <meta charset="utf-8">
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B0FHXMTYNC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-B0FHXMTYNC');
+</script>
+<!-- End Google Analytics -->
+
+  
+  <title>纯硬件实现NFC灯光画 | Kizureina&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="7SINS NFC灯光画马上就是7SINS的Final live了，虽然只是看她们只有几个月的新观众，但也充分感受到老广T0地偶的魅力了。其实只有去看一场她们的演出，一定会被打动的。纯粹的热情，反抗的勇气，和最温柔细腻的心情，居然能如此协调地融合在一起，这种奇妙的一体感只有在这狭小的舞台上下才能感受到。 我希望能给7SINS我最喜欢的成员——也是我觉得7INS的灵魂，PURiN——送一个有趣的毕业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="纯硬件实现NFC灯光画">
+<meta property="og:url" content="https://kizureina.github.io/2026/06/11/7SINS-PURiN-NFC-PCB/index.html">
+<meta property="og:site_name" content="Kizureina&#39;s Blog">
+<meta property="og:description" content="7SINS NFC灯光画马上就是7SINS的Final live了，虽然只是看她们只有几个月的新观众，但也充分感受到老广T0地偶的魅力了。其实只有去看一场她们的演出，一定会被打动的。纯粹的热情，反抗的勇气，和最温柔细腻的心情，居然能如此协调地融合在一起，这种奇妙的一体感只有在这狭小的舞台上下才能感受到。 我希望能给7SINS我最喜欢的成员——也是我觉得7INS的灵魂，PURiN——送一个有趣的毕业">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kizureina.github.io/images/image-20260611232105965.png">
+<meta property="og:image" content="https://kizureina.github.io/images/image-20260611232547667.png">
+<meta property="article:published_time" content="2026-06-11T15:10:21.000Z">
+<meta property="article:modified_time" content="2026-06-11T15:41:09.558Z">
+<meta property="article:author" content="Kizurena">
+<meta property="article:tag" content="Web Computer Science Anime Comic Galgame">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kizureina.github.io/images/image-20260611232105965.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Kizureina's Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: light)" href="/images/favicon-light-192.png" sizes="192x192">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-32.png" sizes="32x32">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-128.png" sizes="128x128">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-180.png" sizes="180x180">
+    <link rel="icon" media="(prefers-color-scheme: dark)" href="/images/favicon-dark-192.png" sizes="192x192">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  
+  
+    
+<div id="banner" class="">
+  <img src="/banner.png" itemprop="image">
+  <div id="banner-dim"></div>
+</div>
+ 
+   
+  <div id="main-grid" class="shadow   ">
+    <div id="nav" class=""  >
+      <navbar id="navbar">
+  <nav id="title-nav">
+    <a href="/">
+      <div id="vivia-logo">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div>Kizureina's Blog </div>
+    </a>
+  </nav>
+  <nav id="main-nav">
+    
+      <a class="main-nav-link" href="/">Home</a>
+    
+      <a class="main-nav-link" href="/archives">Archives</a>
+    
+      <a class="main-nav-link" href="/about">About</a>
+    
+      <a class="main-nav-link" href="/links">Links</a>
+    
+  </nav>
+  <nav id="sub-nav">
+    <a id="theme-btn" class="nav-icon">
+      <span class="material-symbols-rounded light-mode-icon">wb_sunny</span>
+      <span class="material-symbols-rounded dark-mode-icon">dark_mode</span>
+    </a>
+    
+      <a id="nav-rss-link" class="nav-icon mobile-hide" href="/atom.xml" title="RSS 订阅">
+        <span class="material-symbols-rounded rss">rss_feed</span>
+      </a>
+    
+    <a id="nav-search-btn" class="nav-icon" title="搜索" style="display: none;">
+      <span class="material-symbols-rounded">search</span>
+    </a>
+    <div id="nav-menu-btn" class="nav-icon">
+      <span class="material-symbols-rounded">menu</span>
+    </div>
+  </nav>
+</navbar>
+<div id="nav-dropdown" class="hidden">
+  <div id="dropdown-link-list">
+    
+      <a class="nav-dropdown-link" href="/">Home</a>
+    
+      <a class="nav-dropdown-link" href="/archives">Archives</a>
+    
+      <a class="nav-dropdown-link" href="/about">About</a>
+    
+      <a class="nav-dropdown-link" href="/links">Links</a>
+    
+    
+      <a class="nav-dropdown-link" href="/atom.xml" title="RSS 订阅">RSS</a>
+     
+    </div>
+</div>
+<script>
+  let dropdownBtn = document.getElementById("nav-menu-btn");
+  let dropdownEle = document.getElementById("nav-dropdown");
+  dropdownBtn.onclick = function() {
+    dropdownEle.classList.toggle("hidden");
+  }
+</script>
+    </div>
+    <div id="sidebar-wrapper">
+      <sidebar id="sidebar">
+  
+    <div class="widget-wrap">
+  <div class="info-card">
+    <div class="avatar">
+      
+        <image src=https://avatars.githubusercontent.com/u/106158253?v=4></image>
+      
+      <div class="img-dim"></div>
+    </div>
+    <div class="info">
+      <div class="username">Kizureina </div>
+      <div class="dot"></div>
+      <div class="subtitle">I know nothing except the fact of my ignorance. </div>
+      <div class="link-list">
+        
+          <a class="link-btn" target="_blank" rel="noopener" href="https://github.com/Kizureina" title="GitHub"><i class="fa-brands fa-github"></i></a>
+         
+      </div>  
+    </div>
+  </div>
+</div>
+
+  
+  <div class="sticky">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">标签</h3>
+      <ul class="widget-tag-list" itemprop="keywords"><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Advanced-Mathematics/" rel="tag">Advanced Mathematics</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Anime/" rel="tag">Anime</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Comic/" rel="tag">Comic</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Galgame/" rel="tag">Galgame</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Linear-Algebraic/" rel="tag">Linear Algebraic</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Machine-Learning/" rel="tag">Machine Learning</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/RCE/" rel="tag">RCE</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/Reverse-shell/" rel="tag">Reverse shell</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/ShikaIdol/" rel="tag">ShikaIdol</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag">嵌入式</a></li><li class="widget-tag-list-item"><a class="widget-tag-list-link" href="/tags/%E7%A1%AC%E4%BB%B6/" rel="tag">硬件</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">归档</h3>
+      
+      
+        <a class="archive-link" href="/archives/2026/06 ">
+          六月 2026 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2026/01 ">
+          一月 2026 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2025/12 ">
+          十二月 2025 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/12 ">
+          十二月 2024 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/10 ">
+          十月 2024 
+          <div class="archive-count">3 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/09 ">
+          九月 2024 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/08 ">
+          八月 2024 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/07 ">
+          七月 2024 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/06 ">
+          六月 2024 
+          <div class="archive-count">5 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/05 ">
+          五月 2024 
+          <div class="archive-count">5 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/04 ">
+          四月 2024 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/03 ">
+          三月 2024 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/02 ">
+          二月 2024 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2024/01 ">
+          一月 2024 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/12 ">
+          十二月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/11 ">
+          十一月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/10 ">
+          十月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/09 ">
+          九月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/07 ">
+          七月 2023 
+          <div class="archive-count">5 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/06 ">
+          六月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/03 ">
+          三月 2023 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/02 ">
+          二月 2023 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2023/01 ">
+          一月 2023 
+          <div class="archive-count">4 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/12 ">
+          十二月 2022 
+          <div class="archive-count">3 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/11 ">
+          十一月 2022 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/09 ">
+          九月 2022 
+          <div class="archive-count">2 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/06 ">
+          六月 2022 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/04 ">
+          四月 2022 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/03 ">
+          三月 2022 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/02 ">
+          二月 2022 
+          <div class="archive-count">1 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2022/01 ">
+          一月 2022 
+          <div class="archive-count">3 </div>
+        </a>
+      
+        <a class="archive-link" href="/archives/2021/12 ">
+          十二月 2021 
+          <div class="archive-count">1 </div>
+        </a>
+      
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap">
+    <div class="widget">
+      <h3 class="widget-title">最新文章</h3>
+      <ul>
+        
+          <li>
+            <a href="/2026/06/11/7SINS-PURiN-NFC-PCB/">纯硬件实现NFC灯光画</a>
+          </li>
+        
+          <li>
+            <a href="/2026/01/18/shikaIdol-ethic/">地下偶像伦理学</a>
+          </li>
+        
+          <li>
+            <a href="/2025/12/21/Tomorin-Dostoyevsky-and-Camus/">灯的灵魂：真诚与勇气</a>
+          </li>
+        
+          <li>
+            <a href="/2024/12/24/Note-of-CTF/">CTF笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2024/10/29/Note-of-Cryptography/">密码学笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+  </div>
+</sidebar>
+    </div>
+    <div id="content-body">
+       
+
+<article id="post-7SINS-PURiN-NFC-PCB" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  
+    
+   
+  <div class="article-inner">
+    <div class="article-main">
+      <header class="article-header">
+        
+<div class="main-title-bar">
+  <div class="main-title-dot"></div>
+  
+    
+      <h1 class="p-name article-title" itemprop="headline name">
+        纯硬件实现NFC灯光画
+      </h1>
+    
+  
+</div>
+
+        <div class='meta-info-bar'>
+          <div class="meta-info">
+  <time class="dt-published" datetime="2026-06-11T15:10:21.000Z" itemprop="datePublished">2026-06-11</time>
+</div>
+          <div class="need-seperator meta-info">
+            <div class="meta-cate-flex">
+  
+  <a class="meta-cate-link" href="/categories/%E7%A1%AC%E4%BB%B6/">硬件</a>
+   
+</div>
+  
+          </div>
+          <div class="wordcount need-seperator meta-info">
+            779 词 
+          </div>
+        </div>
+        
+      </header>
+      <div class="e-content article-entry" itemprop="articleBody">
+        
+          <h1 id="7SINS-NFC灯光画"><a href="#7SINS-NFC灯光画" class="headerlink" title="7SINS NFC灯光画"></a>7SINS NFC灯光画</h1><p>马上就是7SINS的Final live了，虽然只是看她们只有几个月的新观众，但也充分感受到老广T0地偶的魅力了。其实只有去看一场她们的演出，一定会被打动的。纯粹的热情，反抗的勇气，和最温柔细腻的心情，居然能如此协调地融合在一起，这种奇妙的一体感只有在这狭小的舞台上下才能感受到。</p>
+<p>我希望能给7SINS我最喜欢的成员——也是我觉得7INS的灵魂，PURiN——送一个有趣的毕业礼物，虽然我相信还能在舞台上看到她活跃的身影和笑容，但7SINS的PURiN就仅止于六月二十日了。所以绞尽脑汁，终于找到了我所能想到做到的所有事中，最有趣的一件——NFC灯光画。</p>
+<p>虽然没办法做成大量的无料（老实说我对这种事没兴趣），但可以尽可能复杂和丰富。</p>
+<h2 id="电路"><a href="#电路" class="headerlink" title="电路"></a>电路</h2><h3 id="主控和线圈"><a href="#主控和线圈" class="headerlink" title="主控和线圈"></a>主控和线圈</h3><p>NFC最核心的是线圈和主控，综合考量焊接难度和电路简洁可靠，我不打算用更熟悉的单片机写代码实现，而是选择用纯硬件电路完成。所以就用NXP的<code>NTAG213</code>作为主控IC了。</p>
+<p>NFC本质是<em>LC震荡电路</em>，所以关键是作为电感的天线与谐振电容的参数计算，好在NXP有给出参数计算器，首先在NTAG213的datasheet中查参数：</p>
+<p><img src="/../images/image-20260611232105965.png" alt="image-20260611232105965"></p>
+<p>得到谐振电容Ci是<code>50pF</code>，而线圈的输入频率fi是<code>13.56MHz</code>，这个频率也是手机NFC触发的标准参数。具体计算公式如下，把其他参数填好，生成线圈参数：</p>
+<p><img src="/../images/image-20260611232547667.png" alt="image-20260611232547667"></p>
+<p>然后用立创EDA的NFC tools就可以直接生成线圈图形，这可比自己一圈圈画简洁太多了。</p>
+<h2 id="PCB"><a href="#PCB" class="headerlink" title="PCB"></a>PCB</h2><p>我之前就做过PCB画的设计，并且做好送给Cheri了。但可惜当时每天训练太累，其实并没有搞懂各层绘制的原理，而是直接用python写代码分图层的，结果成品的颜色分层很少，效果有点差。这次决心一雪前耻，用好所有可能用到的部分。</p>
+<p>首先任何PCB由<strong>上到下</strong>都可以大体分为：</p>
+<ul>
+<li>顶层丝印</li>
+<li>顶层阻焊</li>
+<li>顶层走线（铺铜）</li>
+<li>基板</li>
+<li>底层走线</li>
+<li>底层阻焊</li>
+<li>底层丝印</li>
+</ul>
+<blockquote>
+<p>其中要注意的是，阻焊层是<strong>反相</strong>绘制的，因为任何电路板都有走线和阻焊，而一般阻焊远远多于走线，所以大部分EDA都是默认如果不画阻焊层，就全部铺满阻焊，即反相绘制——EDA绘制出的部分是<strong>开窗</strong>（即无阻焊层）的。</p>
+</blockquote>
+<p>所以PCB单面的颜色公式可以分析如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>丝印色</th>
+<th>阻焊色</th>
+<th>铺铜色</th>
+<th>基板色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>走线</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>阻焊</td>
+<td>&#x2F;</td>
+<td>X</td>
+<td>O</td>
+<td>O</td>
+</tr>
+<tr>
+<td>丝印</td>
+<td>O</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+</tbody></table>
+<p>如果考虑背面透光，还可以有更多组合，但常用且效果较好的就如上四种颜色了。</p>
+
+        
+      </div>
+
+         
+    </div>
+    
+     
+  </div>
+  
+    
+<nav id="article-nav">
+  <a class="article-nav-btn left  disabled "
+     >
+    <i class="fa-solid fa-angle-left"></i>
+    <p class="title-text">
+        
+    </p>
+  </a>
+  <a class="article-nav-btn right "
+    
+      href="/2026/01/18/shikaIdol-ethic/"
+      title="地下偶像伦理学"
+     >
+
+    <p class="title-text">
+      
+        地下偶像伦理学
+        
+    </p>
+    <i class="fa-solid fa-angle-right"></i>
+  </a>
+</nav>
+
+
+  
+</article>
+
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <div id="comment-card" class="comment-card">
+    <div class="main-title-bar">
+      <div class="main-title-dot"></div>
+      <div class="main-title">留言 </div>
+    </div>
+    <div id="vcomments"></div>
+  </div>
+  <script>
+      new Valine({
+          el: '#vcomments',
+          appId: "j9YBSIHTlRyfuvPQqY50ARfV-gzGzoHsz",
+          appKey: "Q7s9zRzne9zaSVrroDR2wgO8"
+      })
+  </script>
+ 
+    </div>
+    <div id="footer-wrapper">
+      <footer id="footer">
+  
+  <div id="footer-info" class="inner">
+    
+    &copy; 2026 Kizureina<br>
+    Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> & Theme <a target="_blank" rel="noopener" href="https://github.com/saicaca/hexo-theme-vivia">Vivia</a>
+  </div>
+</footer>
+
+    </div>
+    <div class="back-to-top-wrapper">
+    <button id="back-to-top-btn" class="back-to-top-btn" onclick="topFunction()">
+        <span class="material-symbols-rounded">keyboard_arrow_up</span>
+    </button>
+</div>
+
+<script>
+    function topFunction() {
+        window.scroll({ top: 0, behavior: 'smooth' });
+    }
+    let btn = document.getElementById('back-to-top-btn');
+    function scrollFunction() {
+        if (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) {
+            btn.style.opacity = 1;
+        } else {
+            btn.style.opacity = 0;
+        }
+    }
+    window.onscroll = function() {
+        scrollFunction();
+    }
+</script>
+
+  </div>
+  <script src="/js/light-dark-switch.js"></script>
+</body>
+</html>
