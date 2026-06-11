@@ -33,8 +33,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://kizureina.github.io/images/image-20260611232105965.png">
 <meta property="og:image" content="https://kizureina.github.io/images/image-20260611232547667.png">
+<meta property="og:image" content="https://kizureina.github.io/images/image-20260611235116022.png">
 <meta property="article:published_time" content="2026-06-11T15:10:21.000Z">
-<meta property="article:modified_time" content="2026-06-11T15:41:09.558Z">
+<meta property="article:modified_time" content="2026-06-11T15:53:34.321Z">
 <meta property="article:author" content="Kizurena">
 <meta property="article:tag" content="Web Computer Science Anime Comic Galgame">
 <meta name="twitter:card" content="summary">
@@ -417,7 +418,7 @@
   
           </div>
           <div class="wordcount need-seperator meta-info">
-            779 词 
+            891 词 
           </div>
         </div>
         
@@ -433,6 +434,11 @@
 <p>得到谐振电容Ci是<code>50pF</code>，而线圈的输入频率fi是<code>13.56MHz</code>，这个频率也是手机NFC触发的标准参数。具体计算公式如下，把其他参数填好，生成线圈参数：</p>
 <p><img src="/../images/image-20260611232547667.png" alt="image-20260611232547667"></p>
 <p>然后用立创EDA的NFC tools就可以直接生成线圈图形，这可比自己一圈圈画简洁太多了。</p>
+<h3 id="电路原理图"><a href="#电路原理图" class="headerlink" title="电路原理图"></a>电路原理图</h3><p>因为谐振出的是高频交流电，虽然也可以用来驱动LED，但很不稳定，而且难以驱动NTAG213芯片。再加上是高频电路，选择用肖特基二极管整流。</p>
+<p>再需要并联上C2作为储能电容，进一步滤波。</p>
+<p>完整电路图如下：</p>
+<p><img src="/../images/image-20260611235116022.png" alt="image-20260611235116022"></p>
+<p>立创EDA没有NTAG213，所以我画了一个器件，整体还是很简洁鲁棒的。</p>
 <h2 id="PCB"><a href="#PCB" class="headerlink" title="PCB"></a>PCB</h2><p>我之前就做过PCB画的设计，并且做好送给Cheri了。但可惜当时每天训练太累，其实并没有搞懂各层绘制的原理，而是直接用python写代码分图层的，结果成品的颜色分层很少，效果有点差。这次决心一雪前耻，用好所有可能用到的部分。</p>
 <p>首先任何PCB由<strong>上到下</strong>都可以大体分为：</p>
 <ul>
